@@ -5,12 +5,10 @@ import com.natamus.mineralchance.events.MiningEvent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber
 public class ForgeMiningEvent {
 	@SubscribeEvent
-	public void onBlockBreak(BlockEvent.BreakEvent e) {
+	public static void onBlockBreak(BlockEvent.BreakEvent e) {
 		Level level = WorldFunctions.getWorldIfInstanceOfAndNotRemote(e.getLevel());
 		if (level == null) {
 			return;
