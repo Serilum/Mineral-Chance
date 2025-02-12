@@ -5,9 +5,7 @@ import com.natamus.mineralchance.events.MiningEvent;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber
 public class NeoForgeMiningEvent {
 	@SubscribeEvent
 	public static void onBlockBreak(BlockEvent.BreakEvent e) {
