@@ -3,6 +3,7 @@ package com.natamus.mineralchance.config;
 import com.natamus.collective.config.DuskConfig;
 import com.natamus.mineralchance.util.Reference;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +19,8 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean sendMessageOnMineralFind = true;
 	@Entry public static String foundMineralMessage = "You've found a mineral hidden in the block!";
 	@Entry public static boolean ignoreFakePlayers = true;
-	@Entry public static String customOverworldMinerals = "";
-	@Entry public static String customNetherMinerals = "";
+	@Entry public static List<String> customOverworldMinerals = new ArrayList<>();
+	@Entry public static List<String> customNetherMinerals = new ArrayList<>();
 
 	public static void initConfig() {
 		configMetaData.put("extraMineralChanceOnOverworldStoneBreak", Arrays.asList(
@@ -47,10 +48,10 @@ public class ConfigHandler extends DuskConfig {
 			"If enabled, minerals won't be dropped if the player is a fake. For example when a mod breaks a block as a simulated player."
 		));
 		configMetaData.put("customOverworldMinerals", Arrays.asList(
-				"Custom list of overworld minerals. Example: minecraft:diamond,modId:itemId"
+				"Custom list of overworld minerals. Example: minecraft:diamond"
 		));
 		configMetaData.put("customNetherMinerals", Arrays.asList(
-				"Custom list of nether minerals. Example: minecraft:diamond,modId:itemId"
+				"Custom list of nether minerals. Example: minecraft:diamond"
 		));
 
 		DuskConfig.init(Reference.NAME, Reference.MOD_ID, ConfigHandler.class);

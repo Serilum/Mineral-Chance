@@ -50,17 +50,16 @@ public class Util {
 		return netherMinerals.get(GlobalVariables.random.nextInt(netherMinerals.size()));
 	}
 
-	private static void loadCustomMinerals(String customMineralsConf, List<Item> resultList) {
+	private static void loadCustomMinerals(List<String> customMineralsConf, List<Item> resultList) {
 		try {
-			if (customMineralsConf.isBlank()) {
+			if (customMineralsConf == null) {
 				return;
 			}
 
-			String[] customMinerals = customMineralsConf.split(",");
 			Registry<Item> itemRegistry = BuiltInRegistries.ITEM;
 			Set<Item> customMineralsResult = new HashSet<>();
 
-			for (String customMineralTag : customMinerals) {
+			for (String customMineralTag : customMineralsConf) {
 				String[] customMineral = customMineralTag.trim().split(":");
 
 				if (customMineral.length != 2) {
