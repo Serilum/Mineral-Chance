@@ -10,16 +10,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Mod(Reference.MOD_ID)
 public class ModNeoForge {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger("Util");
-
 	public ModNeoForge(IEventBus modEventBus) {
-		LOGGER.warn("Mineral Chance Mod Loaded");
 		if (!ShouldLoadCheck.shouldLoad(Reference.MOD_ID)) {
 			return;
 		}
