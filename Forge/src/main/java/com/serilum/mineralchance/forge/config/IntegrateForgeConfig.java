@@ -1,7 +1,7 @@
-package com.natamus.mineralchance.forge.config;
+package com.serilum.mineralchance.forge.config;
 
 import com.natamus.collective.config.DuskConfig;
-import com.natamus.mineralchance.util.Reference;
+import com.serilum.mineralchance.util.Reference;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 

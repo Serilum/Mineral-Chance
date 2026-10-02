@@ -1,9 +1,9 @@
-package com.natamus.mineralchance;
+package com.serilum.mineralchance;
 
 import com.natamus.collective.check.RegisterMod;
 import com.natamus.collective.check.ShouldLoadCheck;
-import com.natamus.mineralchance.events.MiningEvent;
-import com.natamus.mineralchance.util.Reference;
+import com.serilum.mineralchance.events.MiningEvent;
+import com.serilum.mineralchance.util.Reference;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 

@@ -1,7 +1,7 @@
-package com.natamus.mineralchance.fabric.config;
+package com.serilum.mineralchance.fabric.config;
 
 import com.natamus.collective.config.DuskConfig;
-import com.natamus.mineralchance.util.Reference;
+import com.serilum.mineralchance.util.Reference;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 

@@ -1,7 +1,7 @@
-package com.natamus.mineralchance.forge.events;
+package com.serilum.mineralchance.forge.events;
 
 import com.natamus.collective.functions.WorldFunctions;
-import com.natamus.mineralchance.events.MiningEvent;
+import com.serilum.mineralchance.events.MiningEvent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

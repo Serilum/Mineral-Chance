@@ -1,4 +1,4 @@
-package com.natamus.mineralchance.util;
+package com.serilum.mineralchance.util;
 
 import com.natamus.collective.data.GlobalVariables;
 import net.minecraft.world.item.Item;

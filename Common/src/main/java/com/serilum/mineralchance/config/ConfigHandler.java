@@ -1,7 +1,7 @@
-package com.natamus.mineralchance.config;
+package com.serilum.mineralchance.config;
 
 import com.natamus.collective.config.DuskConfig;
-import com.natamus.mineralchance.util.Reference;
+import com.serilum.mineralchance.util.Reference;
 
 import java.util.Arrays;
 import java.util.HashMap;

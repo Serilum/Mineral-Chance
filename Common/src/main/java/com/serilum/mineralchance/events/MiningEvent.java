@@ -1,4 +1,4 @@
-package com.natamus.mineralchance.events;
+package com.serilum.mineralchance.events;
 
 import com.natamus.collective.data.GlobalVariables;
 import com.natamus.collective.fakeplayer.FakePlayer;
@@ -6,8 +6,8 @@ import com.natamus.collective.functions.CompareBlockFunctions;
 import com.natamus.collective.functions.MessageFunctions;
 import com.natamus.collective.functions.WorldFunctions;
 import com.natamus.collective.services.Services;
-import com.natamus.mineralchance.config.ConfigHandler;
-import com.natamus.mineralchance.util.Util;
+import com.serilum.mineralchance.config.ConfigHandler;
+import com.serilum.mineralchance.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,6 +1,6 @@
-package com.natamus.mineralchance;
+package com.serilum.mineralchance;
 
-import com.natamus.mineralchance.config.ConfigHandler;
+import com.serilum.mineralchance.config.ConfigHandler;
 
 public class ModCommon {
 
