@@ -24,9 +24,7 @@ public class ModFabric implements ModInitializer {
 	}
 
 	private void loadEvents() {
-		PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, entity) -> {
-			MiningEvent.onBlockBreak(world, player, pos, state, entity);
-		});
+		PlayerBlockBreakEvents.AFTER.register(MiningEvent::onBlockBreak);
 	}
 
 	private static void setGlobalConstants() {
