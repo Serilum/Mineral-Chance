@@ -1,97 +1,118 @@
 package com.serilum.mineralchance.events;
 
-import com.natamus.collective.data.GlobalVariables;
 import com.natamus.collective.fakeplayer.FakePlayer;
-import com.natamus.collective.functions.CompareBlockFunctions;
 import com.natamus.collective.functions.MessageFunctions;
-import com.natamus.collective.functions.WorldFunctions;
-import com.natamus.collective.services.Services;
+import com.natamus.collective.functions.TaskFunctions;
 import com.serilum.mineralchance.config.ConfigHandler;
 import com.serilum.mineralchance.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.function.BiConsumer;
+
 public class MiningEvent {
 	public static void onBlockBreak(Level level, Player player, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
-		if (level.isClientSide()) {
+		if (!(level instanceof ServerLevel serverLevel)) {
 			return;
 		}
-		
+
+		if (!Util.isMineralBlock(level, blockState)) {
+			return;
+		}
+
+		ItemStack handStack = player.getMainHandItem().copy();
+		long breakTime = level.getGameTime();
+
+		TaskFunctions.enqueueCollectiveServerTask(serverLevel.getServer(), () -> {
+			if (Util.wasHarvestedByPlayerDestroy(level, blockPos, breakTime)) {
+				return;
+			}
+
+			if (!Util.isBlockGone(level, blockPos)) {
+				return;
+			}
+
+			onBlockHarvest(serverLevel, player, blockPos, blockState, handStack);
+		}, 1);
+	}
+
+	public static void onPlayerDestroy(Level level, Player player, BlockPos blockPos, BlockState blockState, ItemStack destroyedWith) {
+		if (!(level instanceof ServerLevel serverLevel)) {
+			return;
+		}
+
+		if (!Util.isMineralBlock(level, blockState)) {
+			return;
+		}
+
+		Util.markHarvestedByPlayerDestroy(level, blockPos);
+		onBlockHarvest(serverLevel, player, blockPos, blockState, destroyedWith);
+	}
+
+	public static void onBlockHarvest(ServerLevel serverLevel, Player player, BlockPos blockPos, BlockState blockState, ItemStack tool) {
 		if (ConfigHandler.ignoreFakePlayers) {
 			if (player instanceof FakePlayer) {
 				return;
 			}
 		}
-		
+
 		if (player.isCreative()) {
 			return;
 		}
 
-		ItemStack handStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-		if (!Services.TOOLFUNCTIONS.isPickaxe(handStack)) {
+		if (!Util.isMiningTool(serverLevel, tool, blockState)) {
 			return;
 		}
 
 		if (ConfigHandler.disableMineralDropsWithSilkTouch) {
-			if (EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH), handStack) >= 1) {
+			if (Util.hasSilkTouch(serverLevel, tool)) {
 				return;
 			}
 		}
-		
-		Block block = blockState.getBlock();
-		if (!CompareBlockFunctions.isStoneBlock(block) && !CompareBlockFunctions.isNetherStoneBlock(block)) {
+
+		Item randomMineralItem = Util.getRandomMineral(serverLevel, blockState, Util.getFortuneChanceMultiplier(serverLevel, tool));
+		if (randomMineralItem == null) {
 			return;
 		}
-		
-		Item randomMineralItem;
-		if (WorldFunctions.isOverworld(level)) {
-			if (!ConfigHandler.enableOverworldMinerals) {
-				return;
-			}
-			if (CompareBlockFunctions.isNetherStoneBlock(block)) {
-				return;
-			}
-			if (GlobalVariables.random.nextDouble() > ConfigHandler.extraMineralChanceOnOverworldStoneBreak) {
-				return;
-			}
-			randomMineralItem = Util.getRandomOverworldMineral();
-		}
-		else if (WorldFunctions.isNether(level)) {
-			if (!ConfigHandler.enableNetherMinerals) {
-				return;
-			}
-			if (!CompareBlockFunctions.isNetherStoneBlock(block)) {
-				return;
-			}
-			if (GlobalVariables.random.nextDouble() > ConfigHandler.extraMineralChanceOnNetherStoneBreak) {
-				return;
-			}
-			randomMineralItem = Util.getRandomNetherMineral();
-		}
-		else {
-			return;
-		}
-		
-		ItemEntity mineralItemEntity = new ItemEntity(level, blockPos.getX()+0.5, blockPos.getY()+0.5, blockPos.getZ()+0.5, new ItemStack(randomMineralItem, 1));
-		level.addFreshEntity(mineralItemEntity);
-		
+
+		ItemEntity mineralItemEntity = new ItemEntity(serverLevel, blockPos.getX()+0.5, blockPos.getY()+0.5, blockPos.getZ()+0.5, new ItemStack(randomMineralItem, 1));
+		serverLevel.addFreshEntity(mineralItemEntity);
+
 		if (ConfigHandler.sendMessageOnMineralFind) {
-			if (((ServerPlayer)player).connection != null) {
+			if (player instanceof ServerPlayer serverPlayer && serverPlayer.connection != null) {
 				MessageFunctions.sendMessage(player, ConfigHandler.foundMineralMessage, ChatFormatting.DARK_GREEN);
 			}
 		}
+	}
+
+	public static void onExplosionHit(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, Explosion explosion, BiConsumer<ItemStack, BlockPos> dropConsumer) {
+		if (!ConfigHandler.explosionsCanDropMinerals) {
+			return;
+		}
+
+		if (explosion.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK) {
+			return;
+		}
+
+		if (!Util.isMineralBlock(serverLevel, blockState)) {
+			return;
+		}
+
+		Item randomMineralItem = Util.getRandomMineral(serverLevel, blockState, 1.0);
+		if (randomMineralItem == null) {
+			return;
+		}
+
+		dropConsumer.accept(new ItemStack(randomMineralItem, 1), blockPos);
 	}
 }
